@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube 검색 앱</title>
+  <style>
+    body { font-family: Arial; margin: 20px; background: #f9f9f9; }
+    h1 { text-align: center; }
+    .card { background: white; padding: 15px; margin: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    img { width: 100%; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🎥 YouTube 검색 앱</h1>
+  <input type="text" id="query" placeholder="검색어 입력" style="width:80%">
+  <button onclick="searchVideos()">검색</button>
+  <div id="results"></div>
+
+  <script>
+    const API_KEY = 'YOUR_API_KEY_HERE'; // ← 여기 YouTube API 키 넣기
+    async function searchVideos() {
+      const q = document.getElementById('query').value;
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(q)}&key=${API_KEY}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+      data.items.forEach(item => {
+        const videoId = item.id.videoId;
+        const snippet = item.snippet;
+        const card = `
+          <div class="card">
+            <img src="${snippet.thumbnails.medium.url}">
+            <h3>${snippet.title}</h3>
+            <p>${snippet.description}</p>
+            <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">YouTube 보기</a>
+          </div>
+        `;
+        results.innerHTML += card;
+      });
+    }
+  </script>
+</body>
+</html>
